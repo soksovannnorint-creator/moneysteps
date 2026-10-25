@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MoneySteps — Financial confidence, one step at a time</title>
+  <meta name="description" content="MoneySteps helps young adults plan a monthly budget, set savings goals and practise money decisions. Educational tool; data stays in your browser.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Loading state (hidden by script.js once the app is ready) -->
+  <div id="loader" class="loader" role="status" aria-live="polite">
+    <span class="spinner" aria-hidden="true"></span>
+    <span id="loader-text">Loading your plan…</span>
+  </div>
+  <noscript><p class="noscript">MoneySteps needs JavaScript to run. Please enable it in your browser.</p></noscript>
+
+  <div class="scrim" id="scrim" hidden></div>
+
+  <div class="app">
+    <!-- ================= Sidebar ================= -->
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <div class="brand">
+        <span class="brand-logo" aria-hidden="true"><i class="fa-solid fa-seedling"></i></span>
+        <div>
+          <div class="brand-name">MoneySteps</div>
+          <div class="brand-tagline">Small steps, steady confidence</div>
+        </div>
+      </div>
+
+      <nav>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#dashboard" data-view="dashboard"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Dashboard</span></a></li>
+          <li><a class="nav-link" href="#budget" data-view="budget"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span>My Budget</span></a></li>
+          <li><a class="nav-link" href="#spending" data-view="spending"><i class="fa-solid fa-calendar-day" aria-hidden="true"></i><span>Daily Spending</span></a></li>
+          <li><a class="nav-link" href="#goals" data-view="goals"><i class="fa-solid fa-bullseye" aria-hidden="true"></i><span>Savings Goals</span></a></li>
+          <li><a class="nav-link" href="#insights" data-view="insights"><i class="fa-solid fa-compass" aria-hidden="true"></i><span>Insights</span></a></li>
+          <li><a class="nav-link" href="#lessons" data-view="lessons"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i><span>Money Lessons</span></a></li>
+          <li><a class="nav-link" href="#progress" data-view="progress"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span>My Progress</span></a></li>
+          <li><a class="nav-link" href="#settings" data-view="settings"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>Settings</span></a></li>
+        </ul>
+      </nav>
+
+      <p class="sidebar-note">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        Educational tool, not financial advice. Your data stays in this browser.
+      </p>
+    </aside>
+
+    <!-- ================= Main ================= -->
+    <div class="main-col">
+      <header class="topbar">
+        <button type="button" class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false">
+          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+        <div class="topbar-title">
+          <h1 id="page-title" tabindex="-1">Dashboard</h1>
+          <p id="greeting" class="muted"></p>
+        </div>
+        <div class="topbar-right">
+          <span class="date-chip"><i class="fa-regular fa-calendar" aria-hidden="true"></i> <span id="today-date"></span></span>
+          <a class="profile-chip" href="#settings" aria-label="Open settings and profile">
+            <span class="avatar" id="avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+            <span class="profile-name" id="profile-name">Guest</span>
+          </a>
+        </div>
+      </header>
+
+      <main id="main" class="content">
+        <div id="storage-warning" class="banner banner-warn" role="alert" hidden>
+          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          <span>Your browser is blocking local storage, so changes won’t be saved after you close this tab. Use <strong>Settings → Export</strong> to keep a copy.</span>
+        </div>
+
+        <!-- ============ DASHBOARD ============ -->
+        <section id="view-dashboard" class="view" aria-labelledby="page-title">
+          <div id="onboarding" class="card onboarding" hidden>
+            <h2>Welcome to MoneySteps</h2>
+            <p>Let’s get you started. There’s no right pace, and you can change anything later. Everything you enter stays on this device.</p>
+            <ol class="steps">
+              <li><span class="step-num">1</span><div><strong>Make your money plan</strong><p class="muted">Enter your monthly income and expenses to see what’s left.</p><a class="btn btn-primary btn-sm" href="#budget">Start my budget</a></div></li>
+              <li><span class="step-num">2</span><div><strong>Set a savings goal</strong><p class="muted">Pick something you’d like to work towards, big or small.</p><a class="btn btn-secondary btn-sm" href="#goals">Create a goal</a></div></li>
+              <li><span class="step-num">3</span><div><strong>Try a money lesson</strong><p class="muted">Practise real-life decisions with no pressure.</p><a class="btn btn-secondary btn-sm" href="#lessons">Open lessons</a></div></li>
+            </ol>
+          </div>
+
+          <div class="stat-grid">
+            <article class="card stat">
+              <div class="stat-icon"><i class="fa-solid fa-arrow-down-to-line" aria-hidden="true"></i></div>
+              <h2 class="stat-label">Monthly income</h2>
+              <p class="stat-value" id="stat-income">—</p>
+              <p class="stat-sub" id="stat-income-sub"></p>
+            </article>
+            <article class="card stat">
+              <div class="stat-icon"><i class="fa-solid fa-receipt" aria-hidden="true"></i></div>
+              <h2 class="stat-label">Planned expenses</h2>
+              <p class="stat-value" id="stat-expenses">—</p>
+              <p class="stat-sub" id="stat-expenses-sub"></p>
+            </article>
+            <article class="card stat">
+              <div class="stat-icon"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></div>
+              <h2 class="stat-label">Available balance</h2>
+              <p class="stat-value" id="stat-available">—</p>
+              <p class="stat-sub" id="stat-available-sub"></p>
+            </article>
+            <article class="card stat">
+              <div class="stat-icon"><i class="fa-solid fa-piggy-bank" aria-hidden="true"></i></div>
+              <h2 class="stat-label">Saved toward goals</h2>
+              <p class="stat-value" id="stat-savings">—</p>
+              <p class="stat-sub" id="stat-savings-sub"></p>
+            </article>
+          </div>
+
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><h2>Savings goal progress</h2><a class="link" href="#goals">Manage goals</a></div>
+              <div id="dash-goals"></div>
+            </article>
+            <article class="card next-action">
+              <div class="card-head"><h2>Suggested next step</h2></div>
+              <div id="next-action"></div>
+            </article>
+          </div>
+
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><h2>Spending this month</h2><a class="link" href="#spending">Daily spending</a></div>
+              <div id="dash-spending"></div>
+            </article>
+            <article class="card">
+              <div class="card-head"><h2>Recent learning activity</h2><a class="link" href="#lessons">Open lessons</a></div>
+              <div id="dash-learning"></div>
+            </article>
+          </div>
+
+          <article class="card">
+              <div class="card-head"><h2>How we calculate</h2></div>
+              <ul class="plain-list">
+                <li><strong>Planned expenses</strong> = housing + food + transport + education + debt + other essentials + flexible spending.</li>
+                <li><strong>Available balance</strong> = income − planned expenses − planned savings. If this would be below zero we show it as a shortfall, never as spendable money.</li>
+                <li><strong>Spending this month</strong> adds up the expenses you log. It’s compared with your monthly income, and nothing is logged automatically.</li>
+                <li><strong>Saved toward goals</strong> is the total you’ve recorded across your goals. Nothing is added automatically.</li>
+              </ul>
+              <p class="muted small">Figures you typed are your own entries; anything marked “estimate” is calculated by the app.</p>
+          </article>
+        </section>
+
+        <!-- ============ BUDGET ============ -->
+        <section id="view-budget" class="view" aria-labelledby="page-title" hidden>
+          <div class="two-col budget-layout">
+            <form id="budget-form" class="card" novalidate>
+              <div class="card-head"><h2>My Money Plan</h2><span class="tag">Your entries</span></div>
+              <p class="muted">Enter amounts for a typical month. Use 0 for anything that doesn’t apply. When you save, the form clears and your saved plan appears on the right.</p>
+
+              <fieldset><legend>Income</legend><div id="fields-income" class="field-grid"></div></fieldset>
+              <fieldset><legend>Essential expenses</legend><div id="fields-essential" class="field-grid"></div></fieldset>
+              <fieldset><legend>Flexible spending</legend><div id="fields-flexible" class="field-grid"></div></fieldset>
+              <fieldset><legend>Planned savings (optional)</legend><div id="fields-savings" class="field-grid"></div></fieldset>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save budget</button>
+                <button type="button" class="btn btn-secondary" id="budget-edit" hidden>Edit saved budget</button>
+                <button type="button" class="btn btn-ghost" id="budget-revert">Clear form</button>
+              </div>
+              <p id="budget-form-msg" class="form-msg" role="status"></p>
+            </form>
+
+            <aside class="card sticky" aria-labelledby="summary-title">
+              <div class="card-head"><h2 id="summary-title">Your plan at a glance</h2><span class="tag tag-calc" id="sum-tag">Calculated</span></div>
+              <dl class="summary-list">
+                <div><dt>Monthly income</dt><dd id="sum-income">—</dd></div>
+                <div><dt>Total planned expenses</dt><dd id="sum-expenses">—</dd></div>
+                <div><dt>Planned savings</dt><dd id="sum-savings">—</dd></div>
+                <div class="summary-total"><dt id="sum-remaining-label">Remaining</dt><dd id="sum-remaining">—</dd></div>
+              </dl>
+              <div id="budget-status" class="callout" role="status"></div>
+
+              <h3>Where your money is going</h3>
+              <div id="alloc-bar" class="alloc-bar" role="img" aria-label="Allocation bar"></div>
+              <table class="alloc-table">
+                <caption class="visually-hidden">Spending breakdown by category</caption>
+                <thead><tr><th scope="col">Category</th><th scope="col" class="num">Amount</th><th scope="col" class="num">Share</th></tr></thead>
+                <tbody id="alloc-body"></tbody>
+              </table>
+              <p class="muted small" id="alloc-note"></p>
+              <p class="muted small"><strong>Remaining</strong> = income − total planned expenses − planned savings. There’s no ideal percentage that fits everyone, so you decide what makes sense for your situation.</p>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ============ SPENDING ============ -->
+        <section id="view-spending" class="view" aria-labelledby="page-title" hidden>
+          <div class="two-col budget-layout">
+            <form id="spending-form" class="card" novalidate>
+              <div class="card-head"><h2 id="sp-form-title">Log an expense</h2><span class="tag">Your entry</span></div>
+              <p class="muted">Add spending as it happens. Totals and your plan comparison update straight away.</p>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="sp-amount">Amount</label>
+                  <div class="input-wrap">
+                    <span class="cur-symbol" aria-hidden="true">$</span>
+                    <input id="sp-amount" type="number" inputmode="decimal" min="0" step="0.01" aria-describedby="sp-amount-err">
+                  </div>
+                  <p id="sp-amount-err" class="error" role="alert"></p>
+                </div>
+                <div class="field">
+                  <label for="sp-category">Category</label>
+                  <select id="sp-category"></select>
+                  <p class="hint">Budget categories, or add your own.</p>
+                </div>
+                <div class="field" id="sp-newcat-field" hidden>
+                  <label for="sp-newcat">New category name</label>
+                  <input id="sp-newcat" type="text" maxlength="30" aria-describedby="sp-newcat-err">
+                  <p id="sp-newcat-err" class="error" role="alert"></p>
+                  <label for="sp-newcat-type" class="sub-label">Is it mostly a need or a want?</label>
+                  <select id="sp-newcat-type"><option value="want">Want</option><option value="need">Need</option></select>
+                  <p class="hint">Used by Insights to judge whether spending is essential.</p>
+                </div>
+                <div class="field">
+                  <label for="sp-date">Date</label>
+                  <input id="sp-date" type="date" aria-describedby="sp-date-err">
+                  <p id="sp-date-err" class="error" role="alert"></p>
+                </div>
+                <div class="field">
+                  <label for="sp-note">Note <span class="optional">(optional)</span></label>
+                  <input id="sp-note" type="text" maxlength="80" aria-describedby="sp-note-err">
+                  <p id="sp-note-err" class="error" role="alert"></p>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span id="sp-submit">Add expense</span></button>
+                <button type="button" class="btn btn-ghost" id="sp-cancel" hidden>Cancel edit</button>
+              </div>
+            </form>
+
+            <aside class="card" aria-labelledby="sp-summary-title">
+              <div class="card-head">
+                <h2 id="sp-summary-title">Month summary</h2>
+                <div class="month-pick"><label for="sp-month" class="visually-hidden">Month to view</label><input id="sp-month" type="month"></div>
+              </div>
+              <dl class="summary-list">
+                <div><dt>Monthly income (from budget)</dt><dd id="sp-income">—</dd></div>
+                <div><dt>Spent this month</dt><dd id="sp-month-total">—</dd></div>
+                <div><dt>Spent today</dt><dd id="sp-today">—</dd></div>
+                <div><dt id="sp-avg-label">Daily average</dt><dd id="sp-avg">—</dd></div>
+                <div class="summary-total"><dt id="sp-left-label">Money left</dt><dd id="sp-left">—</dd></div>
+              </dl>
+              <div id="sp-status" class="callout" role="status"></div>
+              <p class="muted small">Money left = monthly income − everything you’ve logged this month. Planned savings aren’t taken out here. Logged amounts are your own entries; the rest is calculated.</p>
+            </aside>
+          </div>
+
+          <article class="card">
+            <div class="card-head"><h2>Spending by category</h2><span class="tag tag-calc">Calculated</span></div>
+            <div id="sp-cats"></div>
+          </article>
+
+          <article class="card" id="sp-custom-card" hidden>
+            <div class="card-head"><h2>Your categories</h2></div>
+            <ul id="sp-custom-list" class="exp-list"></ul>
+          </article>
+
+          <article class="card">
+            <div class="card-head"><h2>Expenses</h2></div>
+            <div id="sp-list"></div>
+          </article>
+        </section>
+
+        <!-- ============ GOALS ============ -->
+        <section id="view-goals" class="view" aria-labelledby="page-title" hidden>
+          <div class="section-head">
+            <p class="muted">Track what you’re working towards. Contributions are recorded by you; they don’t change your budget automatically.</p>
+            <button type="button" class="btn btn-primary" id="new-goal-btn"><i class="fa-solid fa-plus" aria-hidden="true"></i> New goal</button>
+          </div>
+          <div id="goals-summary"></div>
+          <div id="goals-list" class="goal-grid"></div>
+        </section>
+
+        <!-- ============ INSIGHTS ============ -->
+        <section id="view-insights" class="view" aria-labelledby="page-title" hidden>
+          <div class="two-col">
+            <article class="card" aria-labelledby="ins-stand-title">
+              <div class="card-head"><h2 id="ins-stand-title">Where you stand</h2><span class="tag tag-calc">Calculated</span></div>
+              <div id="ins-stand"></div>
+            </article>
+            <article class="card" aria-labelledby="ins-find-title">
+              <div class="card-head"><h2 id="ins-find-title">Suggestions for you</h2><span class="tag tag-calc">From your entries</span></div>
+              <div id="ins-findings"></div>
+            </article>
+          </div>
+
+          <article class="card" aria-labelledby="ins-check-title">
+            <div class="card-head"><h2 id="ins-check-title">Should I spend on this?</h2><span class="tag">Decision aid</span></div>
+            <p class="muted">Enter something you’re thinking of buying. The answer depends on whether it’s a need and on what your budget and this month’s spending can cover.</p>
+            <form id="check-form" novalidate>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="ins-name">What is it? <span class="optional">(optional)</span></label>
+                  <input id="ins-name" type="text" maxlength="40" aria-describedby="ins-name-err">
+                  <p id="ins-name-err" class="error" role="alert"></p>
+                </div>
+                <div class="field">
+                  <label for="ins-price">Price</label>
+                  <input id="ins-price" type="number" inputmode="decimal" min="0" step="0.01" aria-describedby="ins-price-err">
+                  <p id="ins-price-err" class="error" role="alert"></p>
+                </div>
+              </div>
+              <fieldset class="kind-box">
+                <legend>What kind of purchase is it?</legend>
+                <label class="check-row"><input type="radio" name="ins-kind" value="need"><span><strong>A need</strong> <span class="muted small">· essential for health, safety, work or study</span></span></label>
+                <label class="check-row"><input type="radio" name="ins-kind" value="want" checked><span><strong>A want</strong> <span class="muted small">· nice to have</span></span></label>
+                <label class="check-row"><input type="radio" name="ins-kind" value="unsure"><span><strong>Not sure</strong></span></label>
+              </fieldset>
+              <label class="check-row"><input type="checkbox" id="ins-wait"><span>It could wait a month</span></label>
+              <div class="form-actions"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Check it</button></div>
+            </form>
+            <div id="ins-result"></div>
+          </article>
+
+          <article class="card" aria-labelledby="ins-eco-title">
+            <div class="card-head">
+              <h2 id="ins-eco-title">The economy right now</h2>
+              <div class="field region-pick"><label for="ins-region">Region</label><select id="ins-region"></select></div>
+            </div>
+            <div id="ins-economy"></div>
+          </article>
+        </section>
+
+        <!-- ============ LESSONS ============ -->
+        <section id="view-lessons" class="view" aria-labelledby="page-title" hidden>
+          <div class="card lesson-head">
+            <div>
+              <p class="muted">Practise real situations. Many choices can be reasonable, so the feedback explains the trade-offs rather than just marking you right or wrong.</p>
+              <p class="lesson-counter"><strong id="lesson-count">0 of 5</strong> scenarios completed · <strong id="lesson-score">0</strong> flexible-first choices</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="lessons-restart">Restart lessons</button>
+          </div>
+          <nav id="lesson-chips" class="chips" aria-label="Lesson scenarios"></nav>
+          <article id="lesson-card" class="card lesson-card"></article>
+        </section>
+
+        <!-- ============ PROGRESS ============ -->
+        <section id="view-progress" class="view" aria-labelledby="page-title" hidden>
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><h2>Budget summary</h2><span class="tag">From your saved budget</span></div>
+              <div id="prog-budget"></div>
+            </article>
+            <article class="card">
+              <div class="card-head"><h2>Savings overview</h2><span class="tag">Your entries</span></div>
+              <div id="prog-savings"></div>
+            </article>
+          </div>
+          <div class="two-col">
+            <article class="card">
+              <div class="card-head"><h2>Learning</h2></div>
+              <div id="prog-lessons"></div>
+            </article>
+            <article class="card">
+              <div class="card-head"><h2>Suggested next steps</h2></div>
+              <div id="prog-next"></div>
+            </article>
+          </div>
+          <article class="card">
+            <div class="card-head"><h2>Achievements</h2><span id="ach-count" class="tag"></span></div>
+            <ul id="ach-list" class="ach-grid"></ul>
+          </article>
+        </section>
+
+        <!-- ============ SETTINGS ============ -->
+        <section id="view-settings" class="view" aria-labelledby="page-title" hidden>
+          <div class="two-col">
+            <form id="settings-form" class="card" novalidate>
+              <div class="card-head"><h2>Profile &amp; currency</h2></div>
+              <div class="field">
+                <label for="set-name">Display name</label>
+                <input id="set-name" type="text" maxlength="40" autocomplete="nickname" aria-describedby="set-name-hint set-name-err">
+                <p id="set-name-hint" class="hint">Optional. Shown in your greeting. Up to 40 characters.</p>
+                <p id="set-name-err" class="error" role="alert"></p>
+              </div>
+              <div class="field">
+                <label for="set-currency">Preferred currency</label>
+                <select id="set-currency"></select>
+                <p class="hint">Changes how amounts are displayed. It doesn’t convert any numbers.</p>
+              </div>
+              <button type="submit" class="btn btn-primary">Save settings</button>
+            </form>
+
+            <div class="card">
+              <div class="card-head"><h2>Your data</h2></div>
+              <p>Everything is stored <strong>only in this browser</strong> using local storage. It isn’t sent anywhere, and it can be lost if you clear your browser data or switch devices. Export a backup now and then.</p>
+              <p class="muted small">MoneySteps never asks for bank logins, passwords or account numbers. Please don’t enter any.</p>
+              <div class="btn-row">
+                <button type="button" class="btn btn-secondary" id="export-btn"><i class="fa-solid fa-download" aria-hidden="true"></i> Export JSON</button>
+                <label class="btn btn-secondary file-btn" for="import-file"><i class="fa-solid fa-upload" aria-hidden="true"></i> Import JSON</label>
+                <input type="file" id="import-file" accept="application/json,.json" class="visually-hidden">
+              </div>
+              <p id="data-msg" class="form-msg" role="status"></p>
+              <hr>
+              <h3>Reset everything</h3>
+              <p class="muted">Deletes your budget, goals, lesson progress and achievements from this browser.</p>
+              <button type="button" class="btn btn-danger" id="reset-btn"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Reset all data</button>
+            </div>
+          </div>
+
+          <article class="card">
+            <div class="card-head"><h2>About MoneySteps</h2></div>
+            <p class="muted">MoneySteps is an educational prototype, not a regulated financial advisory service. It doesn’t promise investment returns or recommend specific products. Estimates are simple calculations from the numbers you enter, and real life is rarely that tidy. For personal advice, speak to a qualified professional or a free money-guidance service in your country.</p>
+          </article>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= Dialogs ================= -->
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-msg">
+    <form method="dialog" class="dialog-body">
+      <h2 id="confirm-title">Are you sure?</h2>
+      <p id="confirm-msg"></p>
+      <div class="dialog-actions">
+        <button class="btn btn-ghost" value="cancel">Cancel</button>
+        <button class="btn btn-primary" id="confirm-ok" value="ok">Confirm</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="goal-dialog" aria-labelledby="goal-dialog-title">
+    <form id="goal-form" class="dialog-body" novalidate>
+      <h2 id="goal-dialog-title">New savings goal</h2>
+      <div class="field">
+        <label for="g-name">Goal name</label>
+        <input id="g-name" type="text" maxlength="60" required aria-describedby="g-name-err">
+        <p id="g-name-err" class="error" role="alert"></p>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="g-target">Target amount</label>
+          <input id="g-target" type="number" inputmode="decimal" min="0" step="0.01" required aria-describedby="g-target-err">
+          <p id="g-target-err" class="error" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="g-saved">Already saved</label>
+          <input id="g-saved" type="number" inputmode="decimal" min="0" step="0.01" value="0" aria-describedby="g-saved-err">
+          <p id="g-saved-err" class="error" role="alert"></p>
+        </div>
+      </div>
+      <div class="field">
+        <label for="g-date">Target date</label>
+        <input id="g-date" type="date" required aria-describedby="g-date-err">
+        <p id="g-date-err" class="error" role="alert"></p>
+      </div>
+      <div class="field">
+        <label for="g-desc">Description <span class="optional">(optional)</span></label>
+        <textarea id="g-desc" rows="2" maxlength="200" aria-describedby="g-desc-err"></textarea>
+        <p id="g-desc-err" class="error" role="alert"></p>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="goal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="goal-save">Save goal</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="contribute-dialog" aria-labelledby="c-title">
+    <form id="contribute-form" class="dialog-body" novalidate>
+      <h2 id="c-title">Add money</h2>
+      <p id="c-info" class="muted"></p>
+      <div class="field">
+        <label for="c-amount">Amount to add</label>
+        <input id="c-amount" type="number" inputmode="decimal" min="0" step="0.01" required aria-describedby="c-amount-err">
+        <p id="c-amount-err" class="error" role="alert"></p>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="c-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add to goal</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
